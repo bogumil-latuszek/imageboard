@@ -1,0 +1,12 @@
+# Rider/IntelliJ
+.idea/
+*.iml
+*.userprefs
+
+# Build outputs
+bin/
+obj/
+
+# Sensitive data
+appsettings.Development.json
+
