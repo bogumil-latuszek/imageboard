@@ -1,0 +1,81 @@
+namespace imageboard.Services;
+
+using imageboard.Models;
+
+public class ImageService
+    {
+        // Temporary in-memory data (replace with database later)
+        private readonly List<Image> _images = new()
+        {
+            new Image
+            {
+                Id = 1,
+                FileName = "https://ygoprodeck.com/card/blue-eyes-white-dragon-7485",
+                Title = "Blue-Eyes White Dragon",
+                Description = "the best Dragon evar",
+                UploadDate = DateTime.Now.AddDays(-2),
+                Uploader = "kaiba",
+                Tags = new List<string> { "epic", "yugioh", "dragon" }
+            },
+            new Image
+            {
+                Id = 2,
+                FileName = "sunset.jpg",
+                Title = "Beautiful Sunset",
+                Description = "A sunset over the mountains",
+                UploadDate = DateTime.Now.AddDays(-2),
+                Uploader = "nature_lover",
+                Tags = new List<string> { "nature", "sunset", "mountains" }
+            },
+            new Image
+            {
+                Id = 3,
+                FileName = "cat.png",
+                Title = "Sleepy Cat",
+                Description = "A cat sleeping in a sunny spot",
+                UploadDate = DateTime.Now.AddDays(-1),
+                Uploader = "cat_person",
+                Tags = new List<string> { "animals", "cat", "cute" }
+            },
+            new Image
+            {
+                Id = 4,
+                FileName = "cityscape.gif",
+                Title = "City Lights",
+                Description = "Night view of city skyscrapers",
+                UploadDate = DateTime.Now.AddHours(-6),
+                Uploader = "urban_explorer",
+                Tags = new List<string> { "city", "night", "architecture" }
+            },
+            new Image
+            {
+                Id = 5,
+                FileName = "forest.jpg",
+                Title = "Misty Forest",
+                Description = "Early morning fog in the forest",
+                UploadDate = DateTime.Now.AddDays(-3),
+                Uploader = "hiker",
+                Tags = new List<string> { "nature", "forest", "fog" }
+            }
+        };
+
+        public List<Image> GetImages()
+        {
+            return _images.OrderByDescending(i => i.UploadDate).ToList();
+        }
+
+        public Image? GetImage(int id)
+        {
+            return _images.FirstOrDefault(i => i.Id == id);
+        }
+
+        public List<Image> SearchImages(string searchTerm)
+        {
+            return _images
+                .Where(i => i.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                           i.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                           i.Tags.Any(t => t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                .OrderByDescending(i => i.UploadDate)
+                .ToList();
+        }
+    }
