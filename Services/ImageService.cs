@@ -10,7 +10,7 @@ public class ImageService
             new Image
             {
                 Id = 1,
-                FileName = "https://ygoprodeck.com/card/blue-eyes-white-dragon-7485",
+                FileName = "dragon.png",
                 Title = "Blue-Eyes White Dragon",
                 Description = "the best Dragon evar",
                 UploadDate = DateTime.Now.AddDays(-2),
@@ -50,7 +50,7 @@ public class ImageService
             new Image
             {
                 Id = 5,
-                FileName = "forest.jpg",
+                FileName = "forest.png",
                 Title = "Misty Forest",
                 Description = "Early morning fog in the forest",
                 UploadDate = DateTime.Now.AddDays(-3),
