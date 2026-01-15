@@ -38,7 +38,7 @@
     @if (Model.items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            @foreach (var image in Model.items)
+            @foreach (var item in Model.items)
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm">
@@ -49,42 +49,42 @@
                                 <i class="bi-image" style="font-size: 3rem;">
                                 </i>
                             </div>
-                            <img src=@image.FullImageUrl class="img-fluid" alt="img-fluid">
+                            <img src=@item.FullUrl class="img-fluid" alt="img-fluid">
                             <!-- In real app, this would be an actual image -->
                             <div class="position-absolute bottom-0 start-0 p-2">
-                                <span class="badge bg-dark">@image.FileName</span>
+                                <span class="badge bg-dark">@item.FileName</span>
                             </div>
                         </div>
                         
                         <div class="card-body">
                             <!-- Title -->
-                            <h5 class="card-title">@image.Title</h5>
+                            <h5 class="card-title">@item.Title</h5>
                             
                             <!-- Description -->
-                            <p class="card-text text-muted small">@image.Description</p>
+                            <p class="card-text text-muted small">@item.Description</p>
                             
                             <!-- Tags -->
                             <div class="mb-2">
-                                @foreach (var tag in image.Tags.Take(3))
+                                @foreach (var tag in item.Tags.Take(3))
                                 {
                                     <a href="/Gallery?search=@tag" 
                                        class="badge bg-secondary text-decoration-none me-1">
                                         @tag
                                     </a>
                                 }
-                                @if (image.Tags.Count > 3)
+                                @if (item.Tags.Count > 3)
                                 {
-                                    <span class="badge bg-light text-dark">+@(image.Tags.Count - 3) more</span>
+                                    <span class="badge bg-light text-dark">+@(item.Tags.Count - 3) more</span>
                                 }
                             </div>
                             
                             <!-- Metadata -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    <i class="bi-person"></i> @image.Uploader
+                                    <i class="bi-person"></i> @item.Uploader
                                 </small>
                                 <small class="text-muted">
-                                    <i class="bi-calendar"></i> @image.UploadDate.ToString("MMM dd")
+                                    <i class="bi-calendar"></i> @item.UploadDate.ToString("MMM dd")
                                 </small>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                 </a>
                             </div>
                             
-                            <a asp-page="/itemDetails" asp-route-imageID="@image.Id" 
+                            <a asp-page="/itemDetails" asp-route-imageID="@item.Id" 
                                class="btn btn-outline-primary btn-sm">
                                 <i class="bi-eye"></i> View Details
                             </a>
