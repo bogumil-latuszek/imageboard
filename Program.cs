@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 // Register ImageService
-builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<ItemService>();
 
 var app = builder.Build();
 

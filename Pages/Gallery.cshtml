@@ -30,15 +30,15 @@
     @if (!string.IsNullOrEmpty(Model.SearchTerm))
     {
         <div class="alert alert-info">
-            Found @Model.TotalImages images for "<strong>@Model.SearchTerm</strong>"
+            Found @Model.TotalItems images for "<strong>@Model.SearchTerm</strong>"
         </div>
     }
     
     <!-- Image Grid -->
-    @if (Model.Images.Any())
+    @if (Model.items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            @foreach (var image in Model.Images)
+            @foreach (var image in Model.items)
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm">

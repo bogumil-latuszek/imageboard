@@ -2,12 +2,12 @@ namespace imageboard.Services;
 
 using imageboard.Models;
 
-public class ImageService
+public class ItemService
     {
         // Temporary in-memory data (replace with database later)
-        private readonly List<Image> _images = new()
+        private readonly List<Item> _items = new()
         {
-            new Image
+            new Item
             {
                 Id = 1,
                 FileName = "dragon.png",
@@ -17,7 +17,7 @@ public class ImageService
                 Uploader = "kaiba",
                 Tags = new List<string> { "epic", "yugioh", "dragon" }
             },
-            new Image
+            new Item
             {
                 Id = 2,
                 FileName = "sunset.jpg",
@@ -27,7 +27,7 @@ public class ImageService
                 Uploader = "nature_lover",
                 Tags = new List<string> { "nature", "sunset", "mountains" }
             },
-            new Image
+            new Item
             {
                 Id = 3,
                 FileName = "cat.png",
@@ -37,7 +37,7 @@ public class ImageService
                 Uploader = "cat_person",
                 Tags = new List<string> { "animals", "cat", "cute" }
             },
-            new Image
+            new Item
             {
                 Id = 4,
                 FileName = "cityscape.gif",
@@ -47,7 +47,7 @@ public class ImageService
                 Uploader = "urban_explorer",
                 Tags = new List<string> { "city", "night", "architecture" }
             },
-            new Image
+            new Item
             {
                 Id = 5,
                 FileName = "forest.png",
@@ -59,19 +59,19 @@ public class ImageService
             }
         };
 
-        public List<Image> GetImages()
+        public List<Item> GetItems()
         {
-            return _images.OrderByDescending(i => i.UploadDate).ToList();
+            return _items.OrderByDescending(i => i.UploadDate).ToList();
         }
 
-        public Image? GetImage(int id)
+        public Item? GetItem(int id)
         {
-            return _images.FirstOrDefault(i => i.Id == id);
+            return _items.FirstOrDefault(i => i.Id == id);
         }
 
-        public List<Image> SearchImages(string searchTerm)
+        public List<Item> SearchItems(string searchTerm)
         {
-            return _images
+            return _items
                 .Where(i => i.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                            i.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                            i.Tags.Any(t => t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))

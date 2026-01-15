@@ -6,18 +6,18 @@ namespace imageboard.Pages;
 
 public class Gallery : PageModel
 {
-    private readonly ImageService _imageService;
+    private readonly ItemService _itemService;
     private readonly ILogger<Gallery> _logger;
         
     // Properties that will be available in the .cshtml file
-    public List<Image> Images { get; set; } = new();
+    public List<Item> items { get; set; } = new();
     public string? SearchTerm { get; set; }
-    public int TotalImages => Images.Count;
+    public int TotalItems => items.Count;
         
     // Constructor with dependency injection
-    public Gallery(ImageService imageService, ILogger<Gallery> logger)
+    public Gallery(ItemService itemService, ILogger<Gallery> logger)
     {
-        _imageService = imageService;
+        _itemService = itemService;
         _logger = logger;
     }
         
@@ -29,15 +29,15 @@ public class Gallery : PageModel
         if (string.IsNullOrEmpty(search))
         {
             // Get all images
-            Images = _imageService.GetImages();
-            _logger.LogInformation("Displaying all {Count} images", Images.Count);
+            items = _itemService.GetItems();
+            _logger.LogInformation("Displaying all {Count} images", items.Count);
         }
         else
         {
             // Search for images
-            Images = _imageService.SearchImages(search);
+            items = _itemService.SearchItems(search);
             _logger.LogInformation("Found {Count} images for search: '{Search}'", 
-                Images.Count, search);
+                items.Count, search);
         }
     }
     

@@ -1,7 +1,7 @@
 namespace imageboard.Models;
 
 // TODO: Rename to Item? Item Container?
-public class Image
+public class Item
 {
     public int Id { get; set; }
     public string FileName { get; set; } = string.Empty;
