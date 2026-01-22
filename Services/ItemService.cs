@@ -1,81 +1,84 @@
+using imageboard.Interfaces;
+using imageboard.Models;
+using imageboard.Repositories;
+
 namespace imageboard.Services;
 
-using imageboard.Models;
-
 public class ItemService
+{
+    private readonly IItemRepository _repository;
+    private readonly ILogger<ItemService> _logger;
+
+    public ItemService(IItemRepository repository, ILogger<ItemService> logger)
     {
-        // Temporary in-memory data (replace with database later)
-        private readonly List<Item> _items = new()
+        _repository = repository;
+        _logger = logger;
+    }
+
+    public async Task<Item?> GetItemAsync(int id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
+
+    public async Task<List<Item>> GetItemsAsync()
+    {
+        return await _repository.GetAllAsync();
+    }
+
+    public async Task<List<Item>> SearchItemsAsync(string searchTerm)
+    {
+        return await _repository.SearchAsync(searchTerm);
+    }
+
+    public async Task<Item> CreateItemAsync(Item item, IEnumerable<string> tags)
+    {
+        var createdItem = await _repository.CreateAsync(item);
+        
+        // Add tags
+        foreach (var tagName in tags)
+        {
+            await _repository.AddTagToItemAsync(createdItem.Id, tagName);
+        }
+        
+        return createdItem;
+    }
+
+    public async Task SeedSampleDataAsync()
+    {
+        var existingItems = await _repository.GetAllAsync();
+        if (existingItems.Any()) return;
+
+        _logger.LogInformation("Seeding sample data...");
+
+        var sampleItems = new List<Item>
         {
             new Item
             {
-                Id = 1,
-                FileName = "dragon.png",
-                Title = "Blue-Eyes White Dragon",
-                Description = "the best Dragon evar",
-                UploadDate = DateTime.Now.AddDays(-2),
-                Uploader = "kaiba",
-                Tags = new List<string> { "epic", "yugioh", "dragon" }
-            },
-            new Item
-            {
-                Id = 2,
                 FileName = "sunset.jpg",
                 Title = "Beautiful Sunset",
                 Description = "A sunset over the mountains",
-                UploadDate = DateTime.Now.AddDays(-2),
                 Uploader = "nature_lover",
-                Tags = new List<string> { "nature", "sunset", "mountains" }
+                UploadDate = DateTime.UtcNow.AddDays(-2)
             },
             new Item
             {
-                Id = 3,
                 FileName = "cat.png",
                 Title = "Sleepy Cat",
                 Description = "A cat sleeping in a sunny spot",
-                UploadDate = DateTime.Now.AddDays(-1),
                 Uploader = "cat_person",
-                Tags = new List<string> { "animals", "cat", "cute" }
-            },
-            new Item
-            {
-                Id = 4,
-                FileName = "cityscape.gif",
-                Title = "City Lights",
-                Description = "Night view of city skyscrapers",
-                UploadDate = DateTime.Now.AddHours(-6),
-                Uploader = "urban_explorer",
-                Tags = new List<string> { "city", "night", "architecture" }
-            },
-            new Item
-            {
-                Id = 5,
-                FileName = "forest.png",
-                Title = "Misty Forest",
-                Description = "Early morning fog in the forest",
-                UploadDate = DateTime.Now.AddDays(-3),
-                Uploader = "hiker",
-                Tags = new List<string> { "nature", "forest", "fog" }
+                UploadDate = DateTime.UtcNow.AddDays(-1)
             }
         };
 
-        public List<Item> GetItems()
+        foreach (var item in sampleItems)
         {
-            return _items.OrderByDescending(i => i.UploadDate).ToList();
-        }
-
-        public Item? GetItem(int id)
-        {
-            return _items.FirstOrDefault(i => i.Id == id);
-        }
-
-        public List<Item> SearchItems(string searchTerm)
-        {
-            return _items
-                .Where(i => i.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                           i.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                           i.Tags.Any(t => t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
-                .OrderByDescending(i => i.UploadDate)
+            var tags = item.Title.ToLower().Split(' ')
+                .Where(w => w.Length > 3)
                 .ToList();
+                
+            await CreateItemAsync(item, tags);
         }
+
+        _logger.LogInformation("Sample data seeded successfully");
     }
+}

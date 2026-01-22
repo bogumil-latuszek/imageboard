@@ -8,23 +8,19 @@ namespace imageboard.Pages;
 
 public class ItemDetails : PageModel
 {
+    private readonly ItemService _itemService;
+    private readonly ILogger<ItemDetails> _logger;
+    
     public Item? item;
-    
-    public IActionResult OnGet(int imageId)
-    {
-        ItemService service = new ItemService();
-        item = service.GetItem(imageId);
-        if (item == null)
-        {
-            return NotFound();  // Returns 404 status code
-        }
 
-        return Page();
+    public ItemDetails(ItemService itemService, ILogger<ItemDetails> logger)
+    {
+        _itemService = itemService;
+        _logger = logger;
     }
-    
-    // public void OnGet(int imageId)
-    // {
-    //     ImageService service = new ImageService();
-    //     item = service.GetImage(imageId);
-    // }
+
+    public async Task OnGet(int itemId)
+    {
+        item = await _itemService.GetItemAsync(itemId);
+    }
 }

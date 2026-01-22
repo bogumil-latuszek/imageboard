@@ -1,0 +1,77 @@
+@page
+@model imageboard.Pages.TestDbModel
+
+@{
+    ViewData["Title"] = "Database Test";
+}
+
+<div class="container mt-4">
+    <h1>Database Test</h1>
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Database Information</h5>
+            <p><strong>File:</strong> @Model.DatabasePath</p>
+            
+            @if (Model.Tables.Any())
+            {
+                <div class="alert alert-success">
+                    <h6>✅ Database Connection Successful</h6>
+                    <p>Found @Model.Tables.Count table(s)</p>
+                </div>
+                
+                <h6>Tables:</h6>
+                <ul class="list-group">
+                    @foreach (var table in Model.Tables)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @table
+                            <span class="badge bg-primary rounded-pill">
+                                @if (table == "Items")
+                                {
+                                    @Model.ItemCount
+                                }
+                                else if (table == "Tags")
+                                {
+                                    @Model.TagCount
+                                }
+                                else
+                                {
+                                    @:?
+                                }
+                            </span>
+                        </li>
+                    }
+                </ul>
+                
+                <div class="mt-3">
+                    <a asp-page="/Gallery" class="btn btn-primary">Go to Gallery</a>
+                    <a asp-page="/Upload" class="btn btn-success">Upload Item</a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h6>⚠️ No Tables Found</h6>
+                    <p>The database exists but no tables were created.</p>
+                    <p>Try running migrations:</p>
+                    <code>dotnet ef database update</code>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Migration Commands</h5>
+            <pre class="bg-light p-3"><code># Create new migration (when you change models)
+dotnet ef migrations add [MigrationName]
+
+# Apply migrations to database
+dotnet ef database update
+
+# Remove last migration (if you made a mistake)
+dotnet ef migrations remove</code></pre>
+        </div>
+    </div>
+</div>

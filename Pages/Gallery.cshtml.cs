@@ -22,20 +22,20 @@ public class Gallery : PageModel
     }
         
     // This runs when the page loads (GET request)
-    public void OnGet(string? search)
+    public async Task OnGetAsync(string? search)
     {
         SearchTerm = search;
             
         if (string.IsNullOrEmpty(search))
         {
             // Get all images
-            items = _itemService.GetItems();
+            items = await _itemService.GetItemsAsync();
             _logger.LogInformation("Displaying all {Count} images", items.Count);
         }
         else
         {
             // Search for images
-            items = _itemService.SearchItems(search);
+            items = await _itemService.SearchItemsAsync(search);
             _logger.LogInformation("Found {Count} images for search: '{Search}'", 
                 items.Count, search);
         }

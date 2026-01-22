@@ -11,12 +11,18 @@
 <head>
     <title></title>
 </head>
-<div class="container">
-    @Model.item.Description
-</div>
 <body>
-<div>
-    
-</div>
+    <div class="container">
+        @if (@Model.item != null)
+        {
+            @Model.item.Description
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                404 IMAGE NOT FOUND
+            </div>
+        }
+    </div>
 </body>
 </html>
