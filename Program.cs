@@ -1,12 +1,29 @@
+using imageboard.Data;
+using imageboard.Interfaces;
+using imageboard.Repositories;
 using imageboard.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// Register ImageService
+// Configure SQLite database
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var dbPath = Path.Combine(builder.Environment.ContentRootPath, "imageboard.db");
+    options.UseSqlite($"Data Source={dbPath}");
+    
+    // Enable detailed errors (remove in production)
+    options.EnableDetailedErrors();
+    options.EnableSensitiveDataLogging();  // For debugging
+});
+
+// Register repository/services
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<ItemService>();
+
 
 var app = builder.Build();
 
@@ -20,6 +37,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
