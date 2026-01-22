@@ -3,6 +3,9 @@
 *.iml
 *.userprefs
 
+# JetBrains Rider user-specific files
+*.sln.DotSettings.user
+
 # Build outputs
 bin/
 obj/
@@ -10,3 +13,5 @@ obj/
 # Sensitive data
 appsettings.Development.json
 
+# Database 
+*.db
