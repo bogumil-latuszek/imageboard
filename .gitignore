@@ -3,6 +3,10 @@
 *.iml
 *.userprefs
 
+# uploads
+wwwroot/uploads/
+wwwroot/thumbnails/
+
 # JetBrains Rider user-specific files
 *.sln.DotSettings.user
 
@@ -15,3 +19,6 @@ appsettings.Development.json
 
 # Database 
 *.db
+*.db-shm
+*.db-wal
+*.db-journal
