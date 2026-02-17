@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using imageboard.Models;
 using imageboard.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,19 @@ public class ItemDetails : PageModel
 
     public async Task OnGet(int itemId)
     {
-        item = await _itemService.GetItemAsync(itemId);
+        Item? itemFound = await _itemService.GetItemAsync(itemId);
+        item = itemFound;
+    }
+
+    public string GetFileExtension(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return string.Empty;
+            
+        int lastDotIndex = fileName.LastIndexOf('.');
+        if (lastDotIndex == -1 || lastDotIndex == fileName.Length - 1)
+            return string.Empty; // No extension or ends with dot
+            
+        return fileName.Substring(lastDotIndex + 1).ToLowerInvariant();
     }
 }
