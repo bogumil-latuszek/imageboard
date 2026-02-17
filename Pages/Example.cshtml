@@ -1,0 +1,28 @@
+@page
+@model imageboard.Pages.Example 
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        <form method="post">     <!-- ← "POST requests go to this page's handlers" -->
+            <!-- here you add form fields with asp-for -->
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <div>
+        <form method="post">
+            <!-- Explicitly call custom handler -->
+            <button type="submit" asp-page-handler="Captcha">Upload</button>
+        </form>
+    </div>
+</body>
+</html>
