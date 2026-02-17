@@ -1,0 +1,168 @@
+@page
+@model imageboard.Pages.UploadModel
+@{
+    ViewData["Title"] = "Upload Item";
+}
+
+@* <style> *@
+@*     .form-label i { *@
+@*         margin-right: 0.5rem; *@
+@*     } *@
+@*      *@
+@*     .card { *@
+@*         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); *@
+@*     } *@
+@*      *@
+@*     .card-header { *@
+@*         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); *@
+@*         color: white; *@
+@*     } *@
+@* </style> *@
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">
+                        <i class="bi-cloud-upload"></i> Upload New Item
+                    </h2>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @Model.SuccessMessage
+                            <a asp-page="/Gallery" class="alert-link">View Gallery</a>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @Model.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">
+                                <i class="bi-card-heading"></i> Title *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="title" 
+                                   asp-for="Title"
+                                   placeholder="Give your item a descriptive title"
+                                   required>
+                            <div class="form-text">Be descriptive but concise.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="bi-text-paragraph"></i> Description
+                            </label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      asp-for="Description"
+                                      rows="3"
+                                      placeholder="Optional description or context"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="uploader" class="form-label">
+                                <i class="bi-person"></i> Uploader Name
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="uploader" 
+                                   asp-for="Uploader"
+                                   placeholder="Your name or 'Anonymous'">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tagsInput" class="form-label">
+                                <i class="bi-tags"></i> Tags *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="tagsInput" 
+                                   asp-for="TagsInput"
+                                   placeholder="comma, separated, tags"
+                                   required>
+                            <div class="form-text">
+                                Separate tags with commas. Example: <code>nature, landscape, sunset</code>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="itemFile" class="form-label">
+                                <i class="bi-file-earmark-arrow-up"></i> Select File *
+                            </label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="itemFile" 
+                                   asp-for="ItemFile"
+                                   accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.webm"
+                                   required>
+                            <div class="form-text">
+                                Allowed: Images (JPG, PNG, GIF, WebP) and Videos (MP4, WebM). Max 10MB.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi-cloud-upload"></i> Upload Item
+                            </button>
+                            <a asp-page="/Gallery" class="btn btn-outline-secondary">
+                                <i class="bi-arrow-left"></i> Back to Gallery
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-muted">
+                    <small>
+                        <i class="bi-info-circle"></i> 
+                        By uploading, you confirm you have the right to share this content.
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Help/Instructions -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi-question-circle"></i> Upload Guidelines
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Use descriptive titles and tags for better searchability</li>
+                        <li>Tag appropriately (e.g., "nature, landscape, sunset")</li>
+                        <li>Respect copyright and only upload content you have rights to</li>
+                        <li>Maximum file size: 10MB</li>
+                        <li>Supported formats: JPG, PNG, GIF, WebP, MP4, WebM</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* @section Styles { *@
+@*     <style> *@
+@*         .form-label i { *@
+@*             margin-right: 0.5rem; *@
+@*         } *@
+@*          *@
+@*         .card { *@
+@*             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); *@
+@*         } *@
+@*          *@
+@*         .card-header { *@
+@*             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); *@
+@*             color: white; *@
+@*         } *@
+@*     </style> *@
+@* } *@

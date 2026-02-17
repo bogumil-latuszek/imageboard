@@ -96,7 +96,7 @@
                                 </a>
                             </div>
                             
-                            <a asp-page="/itemDetails" asp-route-imageID="@item.Id" 
+                            <a asp-page="/itemDetails" asp-route-itemID="@item.Id" 
                                class="btn btn-outline-primary btn-sm">
                                 <i class="bi-eye"></i> View Details
                             </a>
@@ -133,6 +133,15 @@
             <i class="bi-cloud-upload"></i> Upload Your Own Image
         </a>
     </div>
+    
+    <div class="text-center mt-5 py-5 border-top">
+        <h3>No items yet? Be the first to upload!</h3>
+        <p class="text-muted mb-4">Share your images and videos with the community.</p>
+        <a asp-page="/Upload" class="btn btn-primary btn-lg">
+            <i class="bi-cloud-upload"></i> Upload First Item
+        </a>
+    </div>
+    
 </div>
 
 @* <!-- Add Bootstrap Icons if not already in _Layout.cshtml --> *@

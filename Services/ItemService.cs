@@ -30,17 +30,28 @@ public class ItemService
         return await _repository.SearchAsync(searchTerm);
     }
 
+
     public async Task<Item> CreateItemAsync(Item item, IEnumerable<string> tags)
     {
-        var createdItem = await _repository.CreateAsync(item);
-        
-        // Add tags
-        foreach (var tagName in tags)
+        try
         {
-            await _repository.AddTagToItemAsync(createdItem.Id, tagName);
-        }
+            // Save item to database
+            var createdItem = await _repository.CreateAsync(item);
         
-        return createdItem;
+            // Add tags
+            foreach (var tagName in tags)
+            {
+                await _repository.AddTagToItemAsync(createdItem.Id, tagName);
+            }
+        
+            // Reload with tags
+            return (await _repository.GetByIdAsync(createdItem.Id))!;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating item with tags");
+            throw;
+        }
     }
 
     public async Task SeedSampleDataAsync()
