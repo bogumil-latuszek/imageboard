@@ -1,9 +1,6 @@
 @page
+@using Microsoft.AspNetCore.StaticFiles
 @model imageboard.Pages.ItemDetails
-
-@{
-    Layout = null;
-}
 
 <!DOCTYPE html>
 
@@ -15,11 +12,12 @@
     <div class="container">
         @if (@Model.item != null)
         {
-            @if (Model.GetFileExtension(Model.item.FileName) == "mp4")
+            string fileExtension = Model.GetFileExtension(Model.item.FileName);
+            @if (Model.IsVideoExtension(fileExtension))
             {
                 <video controls style="max-width: 100%;">
                     <source src="@Model.item.FullUrl" 
-                            type="video/mp4">
+                            type=@($"video/{fileExtension}")>
                     Your browser does not support the video tag.
                 </video>
             }

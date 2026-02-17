@@ -37,4 +37,17 @@ public class ItemDetails : PageModel
             
         return fileName.Substring(lastDotIndex + 1).ToLowerInvariant();
     }
+
+    public bool IsVideoExtension(string fileExtension)
+    {
+        return fileExtension switch
+        {
+             "mp4" => true,
+             "webm" => true,
+             "ogg" => true,
+             "avi" => true,
+             "mov" => true,
+             _ => false
+        };
+    }
 }
