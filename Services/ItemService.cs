@@ -54,6 +54,11 @@ public class ItemService
         }
     }
 
+    public async void DeleteItemAsync(int id)
+    {
+        await _repository.DeleteAsync(id);
+    }
+
     public async Task SeedSampleDataAsync()
     {
         var existingItems = await _repository.GetAllAsync();

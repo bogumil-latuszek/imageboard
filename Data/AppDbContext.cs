@@ -22,7 +22,8 @@ public class AppDbContext: DbContext
         modelBuilder.Entity<ItemTag>()
             .HasOne(it => it.Item)
             .WithMany(i => i.ItemTags)
-            .HasForeignKey(it => it.ItemId);
+            .HasForeignKey(it => it.ItemId)
+            .OnDelete(DeleteBehavior.Cascade);
                 
         modelBuilder.Entity<ItemTag>()
             .HasOne(it => it.Tag)

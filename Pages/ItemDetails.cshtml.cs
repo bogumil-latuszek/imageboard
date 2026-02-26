@@ -11,6 +11,9 @@ public class ItemDetails : PageModel
 {
     private readonly ItemService _itemService;
     private readonly ILogger<ItemDetails> _logger;
+
+    [BindProperty]
+    public int? Id { get; set; } = null;
     
     public Item? item;
 
@@ -24,6 +27,42 @@ public class ItemDetails : PageModel
     {
         Item? itemFound = await _itemService.GetItemAsync(itemId);
         item = itemFound;
+    }
+
+    public async Task<IActionResult> OnPostDelete()
+    {
+        // call file manager to delete the image
+        // then, return page in alternate version "the image has been deleted"
+        try
+        {
+            if(Id == null)
+            {
+                return Page();
+            }
+            int itemId = (int) Id;
+            Item? itemFound = await _itemService.GetItemAsync(itemId);
+            if(itemFound == null)
+            {
+                return Page();
+            }
+            
+            // Delete physical file
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", itemFound.FileName);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            // Delete Item and Tag Associations using cascading
+            _itemService.DeleteItemAsync(itemFound.Id);
+            // change variable for alternate page version "the image has been deleted"
+            return Page();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "an Error occured while deleting item");
+        }
+        return Page();
     }
 
     public string GetFileExtension(string fileName)
