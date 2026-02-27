@@ -10,6 +10,8 @@ public class Tag
     [Required]
     [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
+    
+    public int UseCount { get; set; } 
         
     // Navigation property
     public List<ItemTag> ItemTags { get; set; } = new();

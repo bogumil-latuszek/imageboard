@@ -40,21 +40,9 @@ public class ItemDetails : PageModel
                 return Page();
             }
             int itemId = (int) Id;
-            Item? itemFound = await _itemService.GetItemAsync(itemId);
-            if(itemFound == null)
-            {
-                return Page();
-            }
             
-            // Delete physical file
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", itemFound.FileName);
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
+            _itemService.DeleteItemAsync(itemId);
 
-            // Delete Item and Tag Associations using cascading
-            _itemService.DeleteItemAsync(itemFound.Id);
             // change variable for alternate page version "the image has been deleted"
             return Page();
         }

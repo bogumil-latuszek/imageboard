@@ -15,6 +15,7 @@ public interface IItemRepository
     // Tag management
     Task<Tag?> GetTagByNameAsync(string name);
     Task<Tag> CreateTagAsync(string name);
+    void DeleteTagAsync(int Id);
     Task AddTagToItemAsync(int itemId, string tagName);
     Task RemoveTagFromItemAsync(int itemId, int tagId);
 }

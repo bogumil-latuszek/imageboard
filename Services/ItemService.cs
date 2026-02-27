@@ -54,9 +54,36 @@ public class ItemService
         }
     }
 
-    public async void DeleteItemAsync(int id)
+    public async void DeleteItemAsync(int Id)
     {
-        await _repository.DeleteAsync(id);
+        Item? itemFound = await GetItemAsync(Id);
+
+        if(itemFound == null)
+        {
+            return;
+        }
+
+        // Delete physical file
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", itemFound.FileName);
+        if (System.IO.File.Exists(filePath))
+        {
+            System.IO.File.Delete(filePath);
+        }
+        // Update tag use counts
+        foreach (var itemTag in itemFound.ItemTags.ToList())
+        {
+            var tag = itemTag.Tag;
+            tag.UseCount--;
+            
+            if (tag.UseCount <= 0)
+            {
+                // Remove orphaned tag
+                _repository.DeleteTagAsync(tag.Id);
+            }
+            // Note: The ItemTag itself will be cascade deleted when we remove the Item
+        }
+        // Delete Item and Tag Associations using cascading
+        await _repository.DeleteAsync(Id);
     }
 
     public async Task SeedSampleDataAsync()

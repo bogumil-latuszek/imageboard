@@ -143,6 +143,25 @@ public class ItemRepository : IItemRepository
         return tag;
     }
 
+    public async void DeleteTagAsync(int Id)
+    {
+        try
+        {
+            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Id == Id);
+            if (tag != null)
+            {
+                _context.Tags.Remove(tag);
+                await _context.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting item with ID {ItemId}", Id);
+            throw;
+        }
+    }
+
+
     public async Task AddTagToItemAsync(int itemId, string tagName)
     {
         var item = await GetByIdAsync(itemId);
@@ -150,10 +169,10 @@ public class ItemRepository : IItemRepository
             throw new ArgumentException($"Item with ID {itemId} not found");
 
         var tag = await GetTagByNameAsync(tagName) ?? await CreateTagAsync(tagName);
-        
         // Check if relationship already exists
         if (!item.ItemTags.Any(it => it.TagId == tag.Id))
         {
+            tag.UseCount += 1;
             item.ItemTags.Add(new ItemTag { ItemId = itemId, TagId = tag.Id });
             await _context.SaveChangesAsync();
         }
