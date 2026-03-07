@@ -12,19 +12,18 @@
     <div class="container">
         @if (@Model.item != null)
         {
-            string fileExtension = Model.GetFileExtension(Model.item.FileName);
-            @if (Model.IsVideoExtension(fileExtension))
+            @if (Model.IsVideoExtension(Model.item.FileType))
             {
                 <video controls style="max-width: 100%;">
-                    <source src="@Model.item.FullUrl" 
-                            type=@($"video/{fileExtension}")>
+                    <source src="@Model.item.Id" 
+                            type=@($"video/{Model.item.FileType}")>
                     Your browser does not support the video tag.
                 </video>
             }
             else
             {
-                <img src="@Model.item.FullUrl" 
-                    alt="@Model.item.FileName" 
+                <img src="@Model.item.Id" 
+                    alt="@Model.item.Id" 
                     style="max-width: 100%;" />
             }
 

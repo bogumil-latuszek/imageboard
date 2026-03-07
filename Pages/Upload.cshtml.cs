@@ -79,17 +79,8 @@ public class UploadModel : PageModel
             }
             
             // Generate unique filename
-            var fileName = $"{Guid.NewGuid()}{extension}";
             var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
             Directory.CreateDirectory(uploadsPath);
-            
-            var filePath = Path.Combine(uploadsPath, fileName);
-            
-            // Save file
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await ItemFile.CopyToAsync(stream);
-            }
             
             // Parse tags (comma or space separated)
             var tagList = TagsInput.Split(new[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries)
@@ -101,19 +92,30 @@ public class UploadModel : PageModel
             // Create item
             var item = new Item
             {
-                FileName = fileName,
-                Title = Title.Trim(),
+                FileType = extension,
                 Description = Description.Trim(),
-                Uploader = string.IsNullOrWhiteSpace(Uploader) ? "Anonymous" : Uploader.Trim(),
                 UploadDate = DateTime.UtcNow
             };
             
             // Save to database
             var createdItem = await _itemService.CreateItemAsync(item, tagList);
+
+            if(createdItem == null)
+            {
+                throw new Exception("error while writing item to database");
+            }
             
+            var filePath = Path.Combine(uploadsPath, createdItem.Id.ToString());
+            
+            // Save file
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await ItemFile.CopyToAsync(stream);
+            }
+
             _logger.LogInformation("Item uploaded: {FileName} by {Uploader} with {TagCount} tags", 
-                fileName, Uploader, tagList.Count);
-            
+                createdItem.Id, Uploader, tagList.Count);
+
             SuccessMessage = $"Item uploaded successfully! ID: {createdItem.Id}";
             
             // Clear form

@@ -15,31 +15,28 @@ public class AppDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
             
-        // Configure many-to-many relationship
+        // Configure composite key
         modelBuilder.Entity<ItemTag>()
             .HasKey(it => new { it.ItemId, it.TagId });
-                
+        
+        // Configure one-to-many relationship between Item-ItemTag
         modelBuilder.Entity<ItemTag>()
             .HasOne(it => it.Item)
             .WithMany(i => i.ItemTags)
             .HasForeignKey(it => it.ItemId)
             .OnDelete(DeleteBehavior.Cascade);
                 
+        // Configure one-to-many relationship between Tag-ItemTag
         modelBuilder.Entity<ItemTag>()
             .HasOne(it => it.Tag)
             .WithMany(t => t.ItemTags)
             .HasForeignKey(it => it.TagId);
-                
-        // Ensure tag names are unique
-        modelBuilder.Entity<Tag>()
-            .HasIndex(t => t.Name)
-            .IsUnique();
                 
         // Add some indexes for performance
         modelBuilder.Entity<Item>()
             .HasIndex(i => i.UploadDate);
                 
         modelBuilder.Entity<Item>()
-            .HasIndex(i => i.Uploader);
+            .HasIndex(i => i.UploaderId);
     }
 }

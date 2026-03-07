@@ -62,11 +62,7 @@ public class ItemRepository : IItemRepository
             return await _context.Items
                 .Include(i => i.ItemTags)
                 .ThenInclude(it => it.Tag)
-                .Where(i => 
-                    i.Title.ToLower().Contains(term) ||
-                    i.Description.ToLower().Contains(term) ||
-                    i.Uploader.ToLower().Contains(term) ||
-                    i.ItemTags.Any(it => it.Tag.Name.ToLower().Contains(term)))
+                .Where(i => i.ItemTags.Any(it => it.Tag.Name.ToLower().Contains(term)))
                 .OrderByDescending(i => i.UploadDate)
                 .ToListAsync();
         }
