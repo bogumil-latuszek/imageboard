@@ -14,9 +14,9 @@ public class Item
     [Key]
     public int Id { get; set; }
 
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime UploadDate { get; set; }
-    //public DateTime UploadDate { get; set; } = DateTime.UtcNow;
+    // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    // public DateTime UploadDate { get; set; }
+    public DateTime UploadDate { get; set; } = DateTime.UtcNow;
 
     // COMPUTED BASED ON UPLOADED DATA
 
