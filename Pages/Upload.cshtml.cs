@@ -9,17 +9,12 @@ namespace imageboard.Pages;
 public class UploadModel : PageModel
 {
     private readonly ItemService _itemService;
+    private readonly FileHashingUtil _fileHashingUtil;
     private readonly IWebHostEnvironment _environment;
     private readonly ILogger<UploadModel> _logger;
     
     [BindProperty]
-    public string Title { get; set; } = string.Empty;
-    
-    [BindProperty]
     public string Description { get; set; } = string.Empty;
-    
-    [BindProperty]
-    public string Uploader { get; set; } = string.Empty;
     
     [BindProperty]
     public string TagsInput { get; set; } = string.Empty;
@@ -30,18 +25,18 @@ public class UploadModel : PageModel
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
     
-    public UploadModel(ItemService itemService, IWebHostEnvironment environment, 
+    public UploadModel(ItemService itemService, FileHashingUtil fileHashingUtil, IWebHostEnvironment environment, 
                       ILogger<UploadModel> logger)
     {
         _itemService = itemService;
+        _fileHashingUtil = fileHashingUtil;
         _environment = environment;
         _logger = logger;
     }
     
     public void OnGet()
     {
-        // Pre-fill uploader if possible (future: from logged-in user)
-        Uploader = User.Identity?.Name ?? "Anonymous";
+        
     }
     
     public async Task<IActionResult> OnPostAsync()
@@ -61,10 +56,11 @@ public class UploadModel : PageModel
         try
         {
             // Validate file type
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".webm" };
-            var extension = Path.GetExtension(ItemFile.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { "jpg", "jpeg", "png", "gif", "webp", "mp4", "webm" };
+            var extensionWithDot = Path.GetExtension(ItemFile.FileName).ToLowerInvariant();
+            var fileType = extensionWithDot?.Substring(1);
             
-            if (!allowedExtensions.Contains(extension))
+            if (!allowedExtensions.Contains(fileType))
             {
                 ErrorMessage = $"File type not allowed. Allowed: {string.Join(", ", allowedExtensions)}";
                 return Page();
@@ -78,48 +74,32 @@ public class UploadModel : PageModel
                 return Page();
             }
             
-            // Generate unique filename
-            var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
-            Directory.CreateDirectory(uploadsPath);
-            
-            // Parse tags (comma or space separated)
-            var tagList = TagsInput.Split(new[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(t => t.Trim().ToLower())
-                .Where(t => t.Length > 0)
-                .Distinct()
-                .ToList();
-            
             // Create item
             var item = new Item
             {
-                FileType = extension,
+                FileType = fileType,
                 Description = Description.Trim(),
-                UploadDate = DateTime.UtcNow
+                Hash = await _fileHashingUtil.ComputeFileHashAsync(ItemFile)
             };
             
+            // // Generate unique filename
+            // var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
+            // Directory.CreateDirectory(uploadsPath);
+
             // Save to database
-            var createdItem = await _itemService.CreateItemAsync(item, tagList);
+            var createdItem = await _itemService.CreateItemAsync(ItemFile, item, TagsInput);
 
             if(createdItem == null)
             {
                 throw new Exception("error while writing item to database");
             }
-            
-            var filePath = Path.Combine(uploadsPath, createdItem.Id.ToString());
-            
-            // Save file
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await ItemFile.CopyToAsync(stream);
-            }
 
-            _logger.LogInformation("Item uploaded: {FileName} by {Uploader} with {TagCount} tags", 
-                createdItem.Id, Uploader, tagList.Count);
+            // _logger.LogInformation("Item uploaded: {FileName} by {Uploader} with {TagCount} tags", 
+            //     createdItem.Id, Uploader, tagList.Count);
 
             SuccessMessage = $"Item uploaded successfully! ID: {createdItem.Id}";
             
             // Clear form
-            Title = string.Empty;
             Description = string.Empty;
             TagsInput = string.Empty;
             ModelState.Clear();

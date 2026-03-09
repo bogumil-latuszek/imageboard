@@ -1,5 +1,6 @@
 @page
 @using Microsoft.AspNetCore.StaticFiles
+@using imageboard.Models
 @model imageboard.Pages.ItemDetails
 
 <!DOCTYPE html>
@@ -15,14 +16,14 @@
             @if (Model.IsVideoExtension(Model.item.FileType))
             {
                 <video controls style="max-width: 100%;">
-                    <source src="@Model.item.Id" 
+                    <source src="@Model.getItemURL(Model.item.Id, Model.item.FileType)" 
                             type=@($"video/{Model.item.FileType}")>
                     Your browser does not support the video tag.
                 </video>
             }
             else
             {
-                <img src="@Model.item.Id" 
+                <img src="@Model.getItemURL(Model.item.Id, Model.item.FileType)"
                     alt="@Model.item.Id" 
                     style="max-width: 100%;" />
             }

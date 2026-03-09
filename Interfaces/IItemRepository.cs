@@ -6,7 +6,7 @@ public interface IItemRepository
 {
     Task<Item?> GetByIdAsync(int id);
     Task<List<Item>> GetAllAsync();
-    Task<List<Item>> SearchAsync(string searchTerm);
+    Task<List<Item>> SearchAsync(List<string> tagNames);
     Task<Item> CreateAsync(Item item);
     Task UpdateAsync(Item item);
     Task DeleteAsync(int id);

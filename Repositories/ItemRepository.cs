@@ -50,28 +50,54 @@ public class ItemRepository : IItemRepository
         }
     }
 
-    public async Task<List<Item>> SearchAsync(string searchTerm)
+    public async Task<List<Item>> SearchAsync(List<string> tagNames)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            // for empty tag name list => return all items
+            if (!tagNames.Any())
+            {
                 return await GetAllAsync();
-
-            var term = searchTerm.Trim().ToLower();
+            }
             
-            return await _context.Items
+            // Remove duplicates to avoid counting issues
+            var distinctTagNames = tagNames.Distinct().ToList();
+
+            List<int> tagIds = await _context.Tags
+                .Where(t => distinctTagNames.Contains(t.Name))
+                .Select(t => t.Id)
+                .ToListAsync();
+
+            // If any tags couldn't be found => return empty list
+            if(tagIds.Count != distinctTagNames.Count)
+            {
+                return new List<Item>();
+            }
+
+            // List<Item> items = await _context.Items
+            //     .Include(i => i.ItemTags)
+            //     .ThenInclude(it => it.Tag)
+            //     .Where(i => i.ItemTags.All(it => tagIds.Contains(it.Tag.Id)))
+            //     .OrderByDescending(i => i.UploadDate)
+            //     .ToListAsync();
+
+            // find all items that have ALL searched tags (but can have more)
+            List<Item> items = await _context.Items
                 .Include(i => i.ItemTags)
                 .ThenInclude(it => it.Tag)
-                .Where(i => i.ItemTags.Any(it => it.Tag.Name.ToLower().Contains(term)))
+                .Where(i => tagIds.All(tagId => i.ItemTags.Any(it => it.Tag.Id == tagId)))
                 .OrderByDescending(i => i.UploadDate)
                 .ToListAsync();
+            
+            return items;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error searching Items with term '{SearchTerm}'", searchTerm);
+            _logger.LogError(ex, "Error searching Items with term '{SearchTerm}'", tagNames.ToString());
             throw;
         }
     }
+
 
     public async Task<Item> CreateAsync(Item item)
     {
@@ -107,11 +133,29 @@ public class ItemRepository : IItemRepository
         try
         {
             var item = await GetByIdAsync(id);
+
             if (item != null)
             {
+                // Update tag use counts
+                foreach (var itemTag in item.ItemTags.ToList())
+                {
+                    // var tag = itemTag.Tag;
+                    // tag.UseCount--;
+                    
+                    // if (tag.UseCount <= 0)
+                    // {
+                    //     // Remove orphaned tag
+                    //     DeleteTagAsync(tag.Id);
+                    // }
+                    // // Note: The ItemTag itself will be cascade deleted when we remove the Item
+                    await RemoveTagFromItemAsync(itemTag.TagId, itemTag.TagId);
+                }
+
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
             }
+
+            
         }
         catch (Exception ex)
         {
@@ -181,6 +225,11 @@ public class ItemRepository : IItemRepository
             
         if (itemTag != null)
         {
+            itemTag.Tag.UseCount -= 1;
+            if(itemTag.Tag.UseCount <= 0)
+            {
+                _context.Tags.Remove(itemTag.Tag);
+            }
             _context.ItemTags.Remove(itemTag);
             await _context.SaveChangesAsync();
         }

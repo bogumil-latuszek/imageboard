@@ -6,11 +6,15 @@ namespace imageboard.Services;
 
 public class ItemService
 {
+    private readonly IWebHostEnvironment _environment;
+
     private readonly IItemRepository _repository;
+
     private readonly ILogger<ItemService> _logger;
 
-    public ItemService(IItemRepository repository, ILogger<ItemService> logger)
+    public ItemService(IWebHostEnvironment environment, IItemRepository repository, ILogger<ItemService> logger)
     {
+        _environment = environment;
         _repository = repository;
         _logger = logger;
     }
@@ -25,24 +29,41 @@ public class ItemService
         return await _repository.GetAllAsync();
     }
 
-    public async Task<List<Item>> SearchItemsAsync(string searchTerm)
+    public async Task<List<Item>> SearchItemsAsync(string tagNamesRaw)
     {
-        return await _repository.SearchAsync(searchTerm);
+        List<string> tagNames = extractTagNames(tagNamesRaw);
+        return await _repository.SearchAsync(tagNames);
+    }
+
+    private List<string> extractTagNames(string tagNamesRaw)
+    {
+        // Parse tags (comma or space separated)
+        var tagList = tagNamesRaw.Split(new[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(t => t.Trim().ToLower())
+            .Where(t => t.Length > 0)
+            .Distinct()
+            .ToList();
+        return tagList;
     }
 
 
-    public async Task<Item> CreateItemAsync(Item item, IEnumerable<string> tags)
+    public async Task<Item> CreateItemAsync(IFormFile itemFile, Item item, string tagNamesRaw)
     {
         try
         {
+            List<string> tagNames = extractTagNames(tagNamesRaw);
+
             // Save item to database
             var createdItem = await _repository.CreateAsync(item);
         
             // Add tags
-            foreach (var tagName in tags)
+            foreach (var tagName in tagNames)
             {
                 await _repository.AddTagToItemAsync(createdItem.Id, tagName);
             }
+
+            // Save itemFile in files
+            saveItemFile(itemFile, createdItem.Id, createdItem.FileType);
         
             // Reload with tags
             return (await _repository.GetByIdAsync(createdItem.Id))!;
@@ -54,74 +75,59 @@ public class ItemService
         }
     }
 
-    public async void DeleteItemAsync(int Id)
+    public async void DeleteItemAsync(int ItemId)
     {
-        // Item? itemFound = await GetItemAsync(Id);
+        // TODO: use transaction for File removal + Tag count update + Item Removal
+        Item? itemFound = await GetItemAsync(ItemId);
 
-        // if(itemFound == null)
-        // {
-        //     return;
-        // }
+        if(itemFound == null)
+        {
+            return;
+        }
 
-        // // Delete physical file
-        // var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", itemFound.FileName);
-        // if (System.IO.File.Exists(filePath))
-        // {
-        //     System.IO.File.Delete(filePath);
-        // }
-        // // Update tag use counts
-        // foreach (var itemTag in itemFound.ItemTags.ToList())
-        // {
-        //     var tag = itemTag.Tag;
-        //     tag.UseCount--;
-            
-        //     if (tag.UseCount <= 0)
-        //     {
-        //         // Remove orphaned tag
-        //         _repository.DeleteTagAsync(tag.Id);
-        //     }
-        //     // Note: The ItemTag itself will be cascade deleted when we remove the Item
-        // }
-        // // Delete Item and Tag Associations using cascading
-        // await _repository.DeleteAsync(Id);
+        // Delete physical file
+        deleteItemFile(ItemId, itemFound.FileType);
+
+        // Delete Item and Tag Associations using cascading
+        await _repository.DeleteAsync(ItemId);
+    }
+    
+    // ****************************
+    // extract to "file manager"?
+
+    public string getItemURL(int itemId, string fileExtension)
+    {
+        // var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
+        // Directory.CreateDirectory(uploadsPath);
+        var uploadsPath = "uploads";
+        string fileName = $"{itemId}.{fileExtension}";
+        return Path.Combine(uploadsPath, fileName);
+        //return Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
     }
 
-    public async Task SeedSampleDataAsync()
+    public string getItemURLForSaving(int itemId, string fileExtension)
     {
-        // var existingItems = await _repository.GetAllAsync();
-        // if (existingItems.Any()) return;
-
-        // _logger.LogInformation("Seeding sample data...");
-
-        // var sampleItems = new List<Item>
-        // {
-        //     new Item
-        //     {
-        //         FileName = "sunset.jpg",
-        //         Title = "Beautiful Sunset",
-        //         Description = "A sunset over the mountains",
-        //         Uploader = "nature_lover",
-        //         UploadDate = DateTime.UtcNow.AddDays(-2)
-        //     },
-        //     new Item
-        //     {
-        //         FileName = "cat.png",
-        //         Title = "Sleepy Cat",
-        //         Description = "A cat sleeping in a sunny spot",
-        //         Uploader = "cat_person",
-        //         UploadDate = DateTime.UtcNow.AddDays(-1)
-        //     }
-        // };
-
-        // foreach (var item in sampleItems)
-        // {
-        //     var tags = item.Title.ToLower().Split(' ')
-        //         .Where(w => w.Length > 3)
-        //         .ToList();
-                
-        //     await CreateItemAsync(item, tags);
-        // }
-
-        // _logger.LogInformation("Sample data seeded successfully");
+        var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
+        Directory.CreateDirectory(uploadsPath);
+        string fileName = $"{itemId}.{fileExtension}";
+        return Path.Combine(uploadsPath, fileName);
+        //return Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
     }
+    public async void saveItemFile(IFormFile itemFile, int itemId, string fileExtension)
+    {
+        string filePath = getItemURLForSaving(itemId, fileExtension);
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await itemFile.CopyToAsync(stream);
+        }
+    }
+    public async void deleteItemFile(int itemId, string fileExtension)
+    {
+        string filePath = getItemURLForSaving(itemId, fileExtension);
+        if (System.IO.File.Exists(filePath))
+        {
+            System.IO.File.Delete(filePath);
+        }
+    }
+    // ****************************
 }

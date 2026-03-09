@@ -49,7 +49,7 @@
                                 <i class="bi-image" style="font-size: 3rem;">
                                 </i>
                             </div>
-                            <img src=@item.Id class="img-fluid" alt="img-fluid">
+                            <img src="@Model.getItemURL(item.Id, item.FileType)" class="img-fluid" alt="img-fluid">
                             <!-- In real app, this would be an actual image -->
                             <div class="position-absolute bottom-0 start-0 p-2">
                                 <span class="badge bg-dark">@item.Id</span>
@@ -57,19 +57,16 @@
                         </div>
                         
                         <div class="card-body">
-                            <!-- Title -->
-                            <h5 class="card-title">@item.Id</h5>
-                            
                             <!-- Description -->
                             <p class="card-text text-muted small">@item.Description</p>
                             
                             <!-- Tags -->
                             <div class="mb-2">
-                                @foreach (var tag in item.ItemTags.Take(3))
+                                @foreach (var itemTag in item.ItemTags.Take(3))
                                 {
-                                    <a href="/Gallery?search=@tag" 
+                                    <a href="/Gallery?search=@itemTag.Tag.Name" 
                                        class="badge bg-secondary text-decoration-none me-1">
-                                        @tag
+                                        @itemTag.Tag.Name
                                     </a>
                                 }
                                 @if (item.ItemTags.Count > 3)

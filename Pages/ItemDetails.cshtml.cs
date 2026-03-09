@@ -53,17 +53,23 @@ public class ItemDetails : PageModel
         return Page();
     }
 
-    public string GetFileExtension(string fileName)
+    public string getItemURL(int itemId, string fileType)
     {
-        if (string.IsNullOrEmpty(fileName))
-            return string.Empty;
-            
-        int lastDotIndex = fileName.LastIndexOf('.');
-        if (lastDotIndex == -1 || lastDotIndex == fileName.Length - 1)
-            return string.Empty; // No extension or ends with dot
-            
-        return fileName.Substring(lastDotIndex + 1).ToLowerInvariant();
+        string itemURL = _itemService.getItemURL(itemId,fileType);
+        return itemURL;
     }
+
+    // public string GetFileExtension(string fileName)
+    // {
+    //     if (string.IsNullOrEmpty(fileName))
+    //         return string.Empty;
+            
+    //     int lastDotIndex = fileName.LastIndexOf('.');
+    //     if (lastDotIndex == -1 || lastDotIndex == fileName.Length - 1)
+    //         return string.Empty; // No extension or ends with dot
+            
+    //     return fileName.Substring(lastDotIndex + 1).ToLowerInvariant();
+    // }
 
     public bool IsVideoExtension(string fileExtension)
     {

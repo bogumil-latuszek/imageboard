@@ -20,12 +20,18 @@ public class Gallery : PageModel
         _itemService = itemService;
         _logger = logger;
     }
+
+    public string getItemURL(int itemId, string fileType)
+    {
+        string itemURL = _itemService.getItemURL(itemId,fileType);
+        return itemURL;
+    }
         
     // This runs when the page loads (GET request)
     public async Task OnGetAsync(string? search)
     {
         SearchTerm = search;
-            
+
         if (string.IsNullOrEmpty(search))
         {
             // Get all images

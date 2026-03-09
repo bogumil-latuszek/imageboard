@@ -20,10 +20,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.EnableSensitiveDataLogging();  // For debugging
 });
 
-// Register repository/services
+// Register repository/services/utilities
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<ItemService>();
-
+builder.Services.AddScoped<FileHashingUtil>();
 
 var app = builder.Build();
 

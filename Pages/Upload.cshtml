@@ -48,19 +48,6 @@
                     
                     <form method="post" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="title" class="form-label">
-                                <i class="bi-card-heading"></i> Title *
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="title" 
-                                   asp-for="Title"
-                                   placeholder="Give your item a descriptive title"
-                                   required>
-                            <div class="form-text">Be descriptive but concise.</div>
-                        </div>
-                        
-                        <div class="mb-3">
                             <label for="description" class="form-label">
                                 <i class="bi-text-paragraph"></i> Description
                             </label>
@@ -69,17 +56,6 @@
                                       asp-for="Description"
                                       rows="3"
                                       placeholder="Optional description or context"></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="uploader" class="form-label">
-                                <i class="bi-person"></i> Uploader Name
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="uploader" 
-                                   asp-for="Uploader"
-                                   placeholder="Your name or 'Anonymous'">
                         </div>
                         
                         <div class="mb-3">
