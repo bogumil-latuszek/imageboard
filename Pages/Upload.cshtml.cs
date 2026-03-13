@@ -14,7 +14,7 @@ public class UploadModel : PageModel
     private readonly ILogger<UploadModel> _logger;
     
     [BindProperty]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = null;
     
     [BindProperty]
     public string TagsInput { get; set; } = string.Empty;
@@ -78,7 +78,7 @@ public class UploadModel : PageModel
             var item = new Item
             {
                 FileType = fileType,
-                Description = Description.Trim(),
+                Description = Description?.Trim() ?? string.Empty,
                 Hash = await _fileHashingUtil.ComputeFileHashAsync(ItemFile)
             };
             
