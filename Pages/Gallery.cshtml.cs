@@ -26,6 +26,12 @@ public class Gallery : PageModel
         string itemURL = _itemService.getItemURL(itemId,fileType);
         return itemURL;
     }
+
+    public string getThumbnailURL(int itemId)
+    {
+        string itemURL = _itemService.getThumbnailURL(itemId);
+        return itemURL;
+    }
         
     // This runs when the page loads (GET request)
     public async Task OnGetAsync(string? search)
@@ -45,6 +51,19 @@ public class Gallery : PageModel
             _logger.LogInformation("Found {Count} images for search: '{Search}'", 
                 items.Count, search);
         }
+    }
+
+    public bool IsVideoExtension(string fileExtension)
+    {
+        return fileExtension switch
+        {
+             "mp4" => true,
+             "webm" => true,
+             "ogg" => true,
+             "avi" => true,
+             "mov" => true,
+             _ => false
+        };
     }
     
 }

@@ -95,6 +95,16 @@ public class ItemService
     // ****************************
     // extract to "file manager"?
 
+    public string getThumbnailURL(int itemId)
+    {
+        // var uploadsPath = "uploads";
+        // var fileExtension = "jpg";
+        // string fileName = $"{itemId}.{fileExtension}";
+        // return Path.Combine("thumbnails", fileName);
+        string fileName = $"defaultVideoThumbnail.png";
+        return Path.Combine("thumbnails", fileName);
+    }
+
     public string getItemURL(int itemId, string fileExtension)
     {
         // var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
