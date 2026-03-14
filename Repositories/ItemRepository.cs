@@ -148,7 +148,7 @@ public class ItemRepository : IItemRepository
                     //     DeleteTagAsync(tag.Id);
                     // }
                     // // Note: The ItemTag itself will be cascade deleted when we remove the Item
-                    await RemoveTagFromItemAsync(itemTag.TagId, itemTag.TagId);
+                    await RemoveTagFromItemAsync(itemTag.ItemId, itemTag.TagId);
                 }
 
                 _context.Items.Remove(item);
