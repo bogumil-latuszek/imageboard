@@ -16,6 +16,8 @@
 - [ ]  add different layouts (grid/big grid/column)
 
 ## Low Priority
+- [ ]  add thumbnails for videos
+- [ ]  add Pagination to search results
 - [ ]  add "Tag Search" Page
 - [ ]  add Tag auto-completion to "Search" Page
 - [ ]  add negative Tag search functionality
