@@ -1,11 +1,9 @@
 # Tasks
 
 ## High Priority
-- [ ]  add support for video formats
-- [ ]  add details (single item view) page
-- [ ]  add option to delete an item from details page
+- [ ]  change upload date generation to adjust to user time zone 
+- [ ]  use transactions to handle item uploads and deletion
 - [ ]  add option to edit an item from details page
-- [ ]  add option to remove an item in details page (with confirmation)
 - [ ]  implement proper error pages (404, 500)
 - [ ]  add roles (anonymous, user, admin)
 
@@ -13,9 +11,7 @@
 - [ ]  add user page with links to "uploads", "profile", "account"
 - [ ]  add "account" page with password settings
 - [ ]  add "profile" page with user name, user icon, user "about" section
-- [ ]  add multiple tags search functionality
 - [ ]  add file size limit
-- [ ]  add item duplicate detection (hash-based)
 - [ ]  add sorting options (newest, oldest, most viewed)
 - [ ]  add different layouts (grid/big grid/column)
 
@@ -43,6 +39,15 @@
 - add personal custom filters per-user
 - add item scanning for illegal/banned content on upload
 - set up CI/CD pipeline (GitHub Actions)
+
+## DONE:
+- [✅]  add support for video formats
+- [✅]  add details (single item view) page
+- [✅]  add option to delete an item from details page
+- [✅]  add option to remove an item in details page (with confirmation)
+- [✅]  add item duplicate detection (hash-based)
+- [✅]  add multiple tags search functionality
+
 
 ```
 in-progress: 🟡
