@@ -48,6 +48,9 @@
 - [✅]  add item duplicate detection (hash-based)
 - [✅]  add multiple tags search functionality
 
+## Errors to Fix:
+- [ ] uploading videos sometimes crashes the app
+
 
 ```
 in-progress: 🟡
